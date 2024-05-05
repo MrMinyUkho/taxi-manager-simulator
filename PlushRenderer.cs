@@ -1,5 +1,14 @@
 ﻿namespace taxi_manager_simulator;
 
+/// <summary>
+/// Объект кнопки, ничего сложного, просто прямоугольник, текст и проверка клика
+/// </summary>
+/// <param name="x">Координата по X</param>
+/// <param name="y">Координата по Y</param>
+/// <param name="w">Ширина</param>
+/// <param name="h">Высота</param>
+/// <param name="col">Цвет</param>
+/// <param name="text">Текст</param>
 class PlushButton(int x, int y, int w, int h, Color col, string text)
 {
     public int x = x;
@@ -12,12 +21,26 @@ class PlushButton(int x, int y, int w, int h, Color col, string text)
     public Color col = col;
     public string text = text;
 
+    /// <summary>
+    /// Проверяет клик
+    /// </summary>
+    /// <param name="X">Место клика по X</param>
+    /// <param name="Y">Место клика по Y</param>
+    /// <returns>Очевидно? - Да.</returns>
     public bool CheckClick(int X, int Y) =>
         X > x && X < x + w &&
         Y > y && Y < y + h;
 
 }
 
+
+/// <summary>
+/// Цвет, не знаю зачем сделал, но в целом полезно
+/// </summary>
+/// <param name="a">Альфа</param>
+/// <param name="r">Красный</param>
+/// <param name="g">Зелёный</param>
+/// <param name="b">Синиий</param>
 class Color(int a, int r, int g, int b)
 {
     public byte a = (byte)a,
@@ -25,14 +48,37 @@ class Color(int a, int r, int g, int b)
                 g = (byte)g,
                 b = (byte)b;
 
+    /// <summary>
+    /// Создание цвета без учёта альфа канала
+    /// </summary>
+    /// <param name="r">Красный</param>
+    /// <param name="g">Зелёный</param>
+    /// <param name="b">Синий</param>
+    /// <returns>Цвет с альфой 255</returns>
     public static Color FromRGB(int r, int g, int b)
         => new(255, r, g, b);
 
+    /// <summary>
+    /// Как конструктор, только статический метот, мб когда-то будет надо
+    /// </summary>
+    /// <param name="a">Альфа</param>
+    /// <param name="r">Красный</param>
+    /// <param name="g">Зелёный</param>
+    /// <param name="b">Синиий</param>
+    /// <returns>Цвет</returns>
     public static Color FromARGB(int a, int r, int g, int b)
         => new(a, r, g, b);
 
+    /// <summary>
+    /// Создание цвета из пространства HSV
+    /// </summary>
+    /// <param name="h">Тон</param>
+    /// <param name="s">Насыщенность</param>
+    /// <param name="v">Значение</param>
+    /// <returns>Цвет</returns>
     public static Color FromHSV(int h, int s, int v)
     {
+        // Тут мегаалгоритм с чата гпт
         double hue = h / 255.0;
         double saturation = s / 255.0;
         double value = v / 255.0;
@@ -86,10 +132,23 @@ class Color(int a, int r, int g, int b)
         return FromRGB((int)red, (int)green, (int)blue);
     }
 
+    /// <summary>
+    /// Затемняет цвет на какой-то процент в значении от 0.0 до 1.0
+    /// </summary>
+    /// <param name="k">Коэфициент</param>
+    /// <returns>Затемнённый цвет</returns>
     public Color Fade(double k) =>
         FromARGB(a, (byte)(r * k), (byte)(g * k), (byte)(b * k));
 
 
+    /// <summary>
+    /// Как FromHSV, только с альфа каналом
+    /// </summary>
+    /// <param name="a">Альфа</param>
+    /// <param name="h">Тон</param>
+    /// <param name="s">Насыщенность</param>
+    /// <param name="v">Значение</param>
+    /// <returns>Цвет</returns>
     public static Color FromAHSV(int a, int h, int s, int v)
     {
         Color c = FromHSV(h, s, v);
@@ -97,8 +156,11 @@ class Color(int a, int r, int g, int b)
         return c;
     }
 
-
-    public static Color operator +(Color a) => a;
+    /// <summary>
+    /// Инвертирпование цвета
+    /// </summary>
+    /// <param name="a">Цвет</param>
+    /// <returns>Инвертированый цвет</returns>
     public static Color operator -(Color a) => new(a.a, -a.r, -a.g, -a.b);
 }
 
@@ -371,7 +433,7 @@ class PlushRenderer
     /// Добавление шрифта в "библиотеку" шрифтов отдельно взятого рендерера
     /// </summary>
     /// <remarks>
-    /// Если не указано имя, то берёться название файла без расширения
+    /// Если не указано имя, то берётся название файла без расширения
     /// </remarks>
     /// <param name="path">Где лежит шрифт</param>
     /// <param name="size">Размер</param>

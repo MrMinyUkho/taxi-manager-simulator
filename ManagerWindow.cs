@@ -1,5 +1,8 @@
 ﻿namespace taxi_manager_simulator;
 
+/// <summary>
+/// Главное окно с картой и кнопочками
+/// </summary>
 class ManagerWindow : BaseWindow
 {
     readonly Dictionary<string, List<int>> points;
@@ -9,6 +12,17 @@ class ManagerWindow : BaseWindow
 
     TaxiManager mngr;
 
+
+    /// <summary>
+    /// Конструктор сего чуда
+    /// </summary>
+    /// <param name="w">Ширина окна</param>
+    /// <param name="h">Высота окна</param>
+    /// <param name="name">Название окна</param>
+    /// <param name="points">Вершины карты</param>
+    /// <param name="edges">Дороги карты</param>
+    /// <param name="taxies">Такси</param>
+    /// <param name="mngr">Менеджер такси</param>
     public ManagerWindow(int w,
                          int h,
                          string name,
@@ -30,6 +44,8 @@ class ManagerWindow : BaseWindow
 
     protected override void Run()
     {
+
+        // Создаём то что надо рисовать, загружаем шрифты и тд
         PlushRenderer.InitText();
         plushRenderer.LoadFont("RobotoMono-Regular.ttf", 15, "Roboto");
         plushRenderer.LoadFont("RobotoMono-Regular.ttf", 20, "Button");
@@ -58,21 +74,21 @@ class ManagerWindow : BaseWindow
                         if (button.CheckClick(x, y))
                         {
                             button.col = -button.col;
-                            showPointNumber = !showPointNumber;
+                            showPointNumber = !showPointNumber; // Надо ли рисовать номера вершин
                         }
                         if (genord.CheckClick(x, y))
                         {
                             genord.col = -genord.col;
-                            mngr.generateNewOrder = !mngr.generateNewOrder;
+                            mngr.generateNewOrder = !mngr.generateNewOrder; // Надо ли генерировать новые заказы
                         }
                         break;
                 }
             }
 
-            ordinq.text = $"Orders in queue: {ordersInQueue}";
+            ordinq.text = $"Orders in queue: {ordersInQueue}"; // Количевство заказов в очереди
             plushRenderer.FillWindow(new(255, 0, 0, 0));
 
-            foreach (var el in edges)
+            foreach (var el in edges) // Отрисовка дорог
             {
                 plushRenderer.DrawLine(
                     points[el[0]].Select((a) =>
@@ -88,14 +104,16 @@ class ManagerWindow : BaseWindow
                 );
             }
 
-            if (showPointNumber)
+            if (showPointNumber) // Если надо рисуем номера вершин
+            {
                 foreach (var el in points.Keys.ToArray())
                 {
                     plushRenderer.DrawCircleF(points[el][0], points[el][1], 5, mapPoints);
                     plushRenderer.DrawText(points[el][0], points[el][1] - 20, $"{el}", new(255, 255, 255, 255), "Roboto");
                 }
+            }
 
-            foreach (var el in taxies)
+            foreach (var el in taxies) // Рисуем текущий путь каждого такси
             {
                 var t = el.Key;
                 var r = t.cur_route;
@@ -116,12 +134,13 @@ class ManagerWindow : BaseWindow
 
             }
 
-            foreach (var el in taxies)
+            foreach (var el in taxies) // Рисуем такси
             {
                 var t = el.Key;
                 plushRenderer.DrawCircleF(t.GetPos().Item1, t.GetPos().Item2, 10, t.col);
             }
 
+            // Рисуем кнопки
             plushRenderer.DrawButton(button);
             plushRenderer.DrawButton(ordinq);
             plushRenderer.DrawButton(genord);
