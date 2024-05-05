@@ -1,11 +1,21 @@
 ﻿namespace taxi_manager_simulator;
 
+/// <summary>
+/// Базовый класс для создания окон с встроеным рендерером и отдельным потоке
+/// </summary>
 abstract class BaseWindow
 {
     protected nint renderer, window;
     protected bool running = true;
     protected PlushRenderer plushRenderer = PlushRenderer.Empty;
 
+    /// <summary>
+    /// Тут инициализируется окно всё как в доках и гайдах
+    /// </summary>
+    /// <remarks>Можно добавить кучу входных параметров типа начальной позиции, что было бы полезно</remarks>
+    /// <param name="w">Ширирна</param>
+    /// <param name="h">Высота</param>
+    /// <param name="name">Название окна</param>
     public BaseWindow(int w, int h, string name)
     {
         new Thread(() =>
@@ -29,6 +39,9 @@ abstract class BaseWindow
         }).Start();
     }
 
+    /// <summary>
+    /// Сюда пихаеться весь функционал с обработкой event-ов и вызовами отрисовки
+    /// </summary>
     abstract protected void Run();
 
     ~BaseWindow()

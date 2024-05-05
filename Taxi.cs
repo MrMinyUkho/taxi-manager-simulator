@@ -1,12 +1,19 @@
 ﻿using System.Diagnostics;
-using System.Drawing;
 
 namespace taxi_manager_simulator;
 
+/// <summary>
+/// Класс такси с расчётом перемещениямя, маршрута и времени
+/// </summary>
+/// <param name="col">Цвет такси</param>
+/// <param name="speed">Скорость</param>
+/// <param name="at">Начальная позиция</param>
 class Taxi(Color col, int speed, Point at)
 {
 
-
+    /// <summary>
+    /// Вот тута функции расчёта перемещений в структуре с текущей позицей на графе
+    /// </summary>
     struct CurPos()
     {
         public Point start;
@@ -37,16 +44,17 @@ class Taxi(Color col, int speed, Point at)
         }
     }
 
-
-
     public readonly Color col = col;
     public int speed = speed;
 
+    /// <summary>
+    /// 0 - В простое<br/>
+    /// 1 - Едет на заказ<br/>
+    /// 2 - Выполняет заказ<br/>
+    /// Другие значения лучше не ставить, не знаю что будет
+    /// </summary>
     public int status = 0;
-    // 0 - idle
-    // 1 - rideToOrder
-    // 2 - InOrder
-
+    
     public List<Point>? cur_route;
     List<Point>? next_route;
 
@@ -56,30 +64,44 @@ class Taxi(Color col, int speed, Point at)
         end = at
     };
 
+
+    /// <summary>
+    /// Добавления маршрута, если возможно
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
     public void NewOrder(Point start, Point end)
     {
-        if (status == 0)
+        if (status == 0) // Если стоим
         {
-            if (pos.end == start)
+            if (pos.end == start) // Если мы уже на начльной точке
             {
                 cur_route = AStar.FindPath(pos.end, start);
                 status = 2;
             }
-            else
+            else                  // Если нет, то прокладываем маршрут до точки
             {
                 cur_route = AStar.FindPath(pos.end, start);
                 next_route = AStar.FindPath(start, end);
                 status = 1;
             }
         }
-        else if (status == 2)
+        else if (status == 2) // Тут запоминаем следующий маршрут
         {
             next_route = AStar.FindPath(start, end);
         }
     }
 
+    /// <summary>
+    /// Получения текущих координат
+    /// </summary>
+    /// <returns></returns>
     public Tuple<int, int> GetPos() => pos.GetPos();
 
+    /// <summary>
+    /// Проверяем может ли такси принимать новые заказы
+    /// </summary>
+    /// <returns>Думаю очевидно что возвращает эта функция</returns>
     public bool ReadyToSetOrder()
     {
         if (status == 0) return true;
@@ -87,6 +109,11 @@ class Taxi(Color col, int speed, Point at)
         return false;
     }
 
+    /// <summary>
+    /// Сердце такси, функция которя запускает цикл в котором
+    /// происходит расчёт передвижения и контроль заказов
+    /// </summary>
+    /// <param name="id">Номер такси</param>
     public void StartLoop(int id)
     {
         TaxiControlWindow win = new(this);
@@ -149,6 +176,12 @@ class Taxi(Color col, int speed, Point at)
         }).Start();
     }
 
+    /// <summary>
+    /// Расчёт времени до следующего заказа + время выполнение заказа
+    /// </summary>
+    /// <param name="A">Начало заказа</param>
+    /// <param name="B">Конец заказа</param>
+    /// <returns>Время выполнения</returns>
     public double GetTimeToOrder(Point A, Point B) => status switch
     {
         0 => AStar.CalculatePathLength(AStar.FindPath(pos.end, A)) / speed,
