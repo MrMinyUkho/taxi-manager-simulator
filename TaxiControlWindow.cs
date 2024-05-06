@@ -1,5 +1,9 @@
 ﻿namespace taxi_manager_simulator;
 
+/// <summary>
+/// Окошко для контроля такси, отображения статуса такси и управление скоростью
+/// </summary>
+/// <param name="taxi">Такси которое мы будем контроллировать</param>
 class TaxiControlWindow(Taxi taxi) : BaseWindow(200, 100, "TaxiControl")
 {
 
@@ -26,13 +30,14 @@ class TaxiControlWindow(Taxi taxi) : BaseWindow(200, 100, "TaxiControl")
                     case SDL_EventType.SDL_MOUSEBUTTONUP:
                         int x, y;
                         _ = SDL_GetMouseState(out x, out y);
-                        if (spDown.CheckClick(x, y)) taxi.speed--;
+                        if (spDown.CheckClick(x, y)) taxi.speed--; // Регулируем скорость
                         if (spUp.CheckClick(x, y)) taxi.speed++;
                         break;
                 }
             }
             plushRenderer.FillWindow(taxi.col.Fade(0.3));
 
+            // Рисуем
             plushRenderer.DrawText(80, 23, $"{taxi.speed}", -taxi.col.Fade(0.3), "Button");
             switch (taxi.status)
             {

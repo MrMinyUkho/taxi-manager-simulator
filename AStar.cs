@@ -1,7 +1,17 @@
 ﻿namespace taxi_manager_simulator;
 
+/// <summary>
+/// Оно как-то работает, написал чатгпт, за его ошибки не ручаюсь
+/// </summary>
 class AStar
 {
+    /// <summary>
+    /// Нахождения самого короткого пути, могут быть неоптимальные результаты из-за неоптимального эврестического 
+    /// алгоритма. В данном случае используется евклидово расстояние. Универсальная, но не всегда эффективная функция.
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="goal"></param>
+    /// <returns></returns>
     public static List<Point> FindPath(Point start, Point goal)
     {
         List<Point> path = [];
@@ -65,6 +75,7 @@ class AStar
         return path;
     }
 
+
     private static List<Point> ReconstructPath(Dictionary<Point, Point> cameFrom, Point current)
     {
         var totalPath = new List<Point> { current };
@@ -79,6 +90,12 @@ class AStar
     private static double HeuristicCostEstimate(Point start, Point goal) =>
         Math.Sqrt(Math.Pow(goal.x - start.x, 2) + Math.Pow(goal.y - start.y, 2));
 
+    /// <summary>
+    /// Нахождение растояния между двумя точками которых связывает одно ребро
+    /// </summary>
+    /// <param name="start">Начальная точка</param>
+    /// <param name="goal">Конечная точка</param>
+    /// <returns></returns>
     public static int GetDistance(Point start, Point goal)
     {
         // Здесь вы можете определить стоимость перемещения между точками.
@@ -91,6 +108,11 @@ class AStar
         return int.MaxValue; // Возврат максимального значения, если нет связи
     }
 
+    /// <summary>
+    /// Находит длинну пути
+    /// </summary>
+    /// <param name="path">Путь</param>
+    /// <returns>Длинна пути</returns>
     public static int CalculatePathLength(List<Point> path)
     {
         int length = 0;
